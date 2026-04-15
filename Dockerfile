@@ -14,8 +14,8 @@ RUN npm run build
 # Stage 2: Serve with nginx
 FROM nginx:1.27-alpine
 
-# Remove default nginx config
-RUN rm -f /etc/nginx/conf.d/default.conf
+# Install apache2-utils for htpasswd generation at runtime
+RUN apk add --no-cache apache2-utils && rm -f /etc/nginx/conf.d/default.conf
 
 # Copy nginx config as template (envsubst at startup)
 COPY nginx.conf /etc/nginx/templates/default.conf.template
