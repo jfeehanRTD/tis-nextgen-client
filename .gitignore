@@ -27,6 +27,17 @@ dist-ssr
 .env
 .env.local
 
+# Cert material for AGW + mTLS testing — never commit.
+# The mTLS Vite proxy reads from $TISNG_CERT_DIR (preferred, outside the repo)
+# or ./certs/. These patterns are defense-in-depth in case a tester drops keys
+# straight into the clone.
+certs/
+*.key
+*.crt
+*.pem
+*.p12
+*.pfx
+
 # TypeScript build
 *.tsbuildinfo
 .htpasswd
