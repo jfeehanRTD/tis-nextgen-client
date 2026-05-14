@@ -58,10 +58,15 @@ function mtlsProxy() {
   // level are NOT forwarded onto the outbound TLS connection (curl would pass
   // while the browser silently fails mTLS). Pass them via a custom https.Agent
   // so the client cert actually presents.
+  // Pin TLS 1.3 minimum. AGW WAF_v2 supports 1.3; pinning here removes
+  // the 1.2 fallback so a server-side misconfig (or future downgrade
+  // attack against weak 1.2 ciphers) can't quietly negotiate something
+  // weaker than what the design assumes.
   const agent = new https.Agent({
     cert: fs.readFileSync(certPath),
     key: fs.readFileSync(keyPath),
     ca: fs.readFileSync(caPath),
+    minVersion: 'TLSv1.3',
   })
   return {
     target: AGW_HOST,
