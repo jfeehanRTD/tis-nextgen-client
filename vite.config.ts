@@ -81,7 +81,12 @@ const localProxy = {
   changeOrigin: true,
 }
 
-export default defineConfig({
+// Use the function form so `mtlsProxy()` (which reads cert files) is only
+// invoked when actually starting the dev server. Otherwise `vite build`,
+// `vitest`, etc. would fail with ENOENT for client.crt whenever TISNG_MTLS=true
+// was exported in the shell — even though those commands have no dev-server
+// proxy at all.
+export default defineConfig(({ command }) => ({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
@@ -97,7 +102,8 @@ export default defineConfig({
     host: '127.0.0.1',
     port: 3000,
     proxy: {
-      '/api': USE_MTLS ? mtlsProxy() : localProxy,
+      '/api':
+        command === 'serve' && USE_MTLS ? mtlsProxy() : localProxy,
     },
   },
-})
+}))
